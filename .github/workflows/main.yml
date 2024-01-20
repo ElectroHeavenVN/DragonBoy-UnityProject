@@ -1,0 +1,137 @@
+name: Build Windows Mono
+
+# on: [push, pull_request]
+on: workflow_dispatch
+
+jobs:
+  buildMono-AllSupportedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }} with mono script backend
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows # Build a Windows standalone.
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - iOS # Build an iOS player.
+          - Android # Build an Android .apk standalone app.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
+      
+      - if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+
+      - name: Change scripting backend to mono
+        run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 0
+      
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          
+      - name: Upload build results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+
+  buildIL2CPP-Linux:
+    name: Build for StandaloneLinux64 with il2cpp script backend
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+     
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        lfs: true
+    
+    - name: Cache 
+      uses: actions/cache@v3
+      with:
+        path: Library
+        key: Library-StandaloneLinux64
+        restore-keys: Library-
+        
+    - name: Change scripting backend to il2cpp
+      run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform StandaloneLinux64 -num 1
+      
+    - name: Build project
+      uses: game-ci/unity-builder@v4
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        targetPlatform: StandaloneLinux64
+
+    - name: Upload build results
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build-StandaloneLinux64
+        path: build/StandaloneLinux64
+
+  buildIL2CPP-WindowsAndAndroid:
+    name: Build for ${{ matrix.targetPlatform }} with il2cpp script backend
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows # Build a Windows standalone.
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - Android # Build an Android .apk standalone app.
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        lfs: true
+     
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: Library
+        key: Library-${{ matrix.targetPlatform }}
+        restore-keys: Library-
+        
+    - if: matrix.targetPlatform == 'Android'
+      uses: jlumbroso/free-disk-space@v1.3.1
+      
+    - name: Change scripting backend to il2cpp
+      run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 1
+      
+    - name: Build project
+      uses: game-ci/unity-builder@v4
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        targetPlatform: ${{ matrix.targetPlatform }}
+
+    - name: Upload build results
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build-${{ matrix.targetPlatform }}
+        path: build/${{ matrix.targetPlatform }}
+          
