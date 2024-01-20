@@ -47,6 +47,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           projectPath: DragonBoy
           buildName: DragonBoy
+          allowDirtyBuild: true
           
       - name: Upload build results
         uses: actions/upload-artifact@v3
@@ -87,6 +88,7 @@ jobs:
         targetPlatform: StandaloneLinux64
         projectPath: DragonBoy
         buildName: DragonBoy
+        allowDirtyBuild: true
 
     - name: Upload build results
       uses: actions/upload-artifact@v3
@@ -131,6 +133,7 @@ jobs:
         targetPlatform: ${{ matrix.targetPlatform }}
         projectPath: DragonBoy
         buildName: DragonBoy
+        allowDirtyBuild: true
 
     - name: Upload build results
       uses: actions/upload-artifact@v3
