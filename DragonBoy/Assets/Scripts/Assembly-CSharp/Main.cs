@@ -241,7 +241,7 @@ public class Main : MonoBehaviour
 			GameMidlet.gameCanvas.update();
 			Image.update();
 			DataInputStream.update();
-			SMS.update();
+			//SMS.update();
 			Net.update();
 			f++;
 			if (f > 8)
