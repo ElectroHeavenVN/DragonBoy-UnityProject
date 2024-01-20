@@ -29,7 +29,7 @@ jobs:
           restore-keys: Library-
 
       - name: Change scripting backend to mono
-        run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 0;tree
+        run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 0;tree /f
       
       - name: Build project
         uses: game-ci/unity-builder@v4
@@ -74,7 +74,7 @@ jobs:
         restore-keys: Library-
       
     - name: Change scripting backend to il2cpp
-      run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 1;tree
+      run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 1;tree /f
       
     - name: Build project
       uses: game-ci/unity-builder@v4
