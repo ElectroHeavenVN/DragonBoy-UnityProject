@@ -5,7 +5,7 @@ on: workflow_dispatch
 
 jobs:
   buildMono-AllSupportedPlatforms:
-    name: Build for ${{ matrix.targetPlatform }} with mono script backend
+    name: Build for ${{ matrix.targetPlatform }} with mono scripting backend
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -27,7 +27,7 @@ jobs:
       - name: Cache
         uses: actions/cache@v3
         with:
-          path: Library
+          path: DragonBoy/Library
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
       
@@ -45,6 +45,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
+          projectPath: DragonBoy
+          buildName: DragonBoy
           
       - name: Upload build results
         uses: actions/upload-artifact@v3
@@ -53,7 +55,7 @@ jobs:
           path: build/${{ matrix.targetPlatform }}
 
   buildIL2CPP-Linux:
-    name: Build for StandaloneLinux64 with il2cpp script backend
+    name: Build for StandaloneLinux64 with il2cpp scripting backend
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -68,7 +70,7 @@ jobs:
     - name: Cache 
       uses: actions/cache@v3
       with:
-        path: Library
+        path: DragonBoy/Library
         key: Library-StandaloneLinux64
         restore-keys: Library-
         
@@ -83,6 +85,8 @@ jobs:
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       with:
         targetPlatform: StandaloneLinux64
+        projectPath: DragonBoy
+        buildName: DragonBoy
 
     - name: Upload build results
       uses: actions/upload-artifact@v3
@@ -91,7 +95,7 @@ jobs:
         path: build/StandaloneLinux64
 
   buildIL2CPP-WindowsAndAndroid:
-    name: Build for ${{ matrix.targetPlatform }} with il2cpp script backend
+    name: Build for ${{ matrix.targetPlatform }} with il2cpp scripting backend
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -110,12 +114,9 @@ jobs:
     - name: Cache
       uses: actions/cache@v3
       with:
-        path: Library
+        path: DragonBoy/Library
         key: Library-${{ matrix.targetPlatform }}
         restore-keys: Library-
-        
-    - if: matrix.targetPlatform == 'Android'
-      uses: jlumbroso/free-disk-space@v1.3.1
       
     - name: Change scripting backend to il2cpp
       run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 1
@@ -128,6 +129,8 @@ jobs:
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       with:
         targetPlatform: ${{ matrix.targetPlatform }}
+        projectPath: DragonBoy
+        buildName: DragonBoy
 
     - name: Upload build results
       uses: actions/upload-artifact@v3
