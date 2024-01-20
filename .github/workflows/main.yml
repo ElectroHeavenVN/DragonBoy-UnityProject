@@ -4,18 +4,15 @@ name: Build project
 on: workflow_dispatch
 
 jobs:
-  buildMono-AllSupportedPlatforms:
+  buildMono-WindowsAndAndroid:
     name: Build for ${{ matrix.targetPlatform }} with mono scripting backend
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
         targetPlatform:
-          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneWindows # Build a Windows standalone.
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
-          - StandaloneLinux64 # Build a Linux 64-bit standalone.
-          - iOS # Build an iOS player.
           - Android # Build an Android .apk standalone app.
     steps:
       - name: Checkout
@@ -30,9 +27,6 @@ jobs:
           path: DragonBoy/Library
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
-      
-      - if: matrix.targetPlatform == 'Android'
-        uses: jlumbroso/free-disk-space@v1.3.1
 
       - name: Change scripting backend to mono
         run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 0;tree
