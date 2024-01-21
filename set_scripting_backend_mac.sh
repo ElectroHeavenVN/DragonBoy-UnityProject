@@ -1,17 +1,17 @@
 #!/bin/bash
 
-function GetValue {
-    scriptingBackend=$1
-    if [ "${scriptingBackend,,}" = "mono" ]; then
+GetValue() {
+    scriptingBackend=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    if [ "$scriptingBackend" = "mono" ]; then
         echo 0
-    elif [ "${scriptingBackend,,}" = "il2cpp" ]; then
+    elif [ "$scriptingBackend" = "il2cpp" ]; then
         echo 1
     else
         echo -1
     fi
 }
 
-function Set-ScriptingBackend {
+Set-ScriptingBackend() {
     projectSettingsPath=$1
     platform=$2
     scriptingBackend=$3
