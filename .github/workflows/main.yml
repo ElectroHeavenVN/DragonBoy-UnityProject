@@ -4,15 +4,18 @@ name: Build project
 on: workflow_dispatch
 
 jobs:
-  buildMono-WindowsAndAndroid:
+  buildMono-AllPlatforms:
     name: Build for ${{ matrix.targetPlatform }} with mono scripting backend
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
         targetPlatform:
+          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneWindows # Build a Windows standalone.
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - iOS # Build an iOS player.
           - Android # Build an Android .apk standalone app.
     steps:
       - name: Checkout
@@ -29,7 +32,7 @@ jobs:
           restore-keys: Library-
 
       - name: Change scripting backend to mono
-        run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 0;tree /f
+        run: pwsh ./set_scripting_backend.ps1 -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 0 || powershell ./set_scripting_backend.ps1 -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 0;
       
       - name: Build project
         uses: game-ci/unity-builder@v4
@@ -49,7 +52,7 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 
-  buildIL2CPP-WindowsAndAndroid:
+  buildIL2CPP-WindowsAndAndroid:  
     name: Build for ${{ matrix.targetPlatform }} with il2cpp scripting backend
     runs-on: windows-latest
     strategy:
@@ -65,7 +68,7 @@ jobs:
       with:
         fetch-depth: 0
         lfs: true
-     
+
     - name: Cache
       uses: actions/cache@v3
       with:
@@ -74,7 +77,7 @@ jobs:
         restore-keys: Library-
       
     - name: Change scripting backend to il2cpp
-      run: function Set-ScriptingBackend{param([string]$projectSettingsPath,[string]$platform,[int]$num)if($platform -like "Standalone*"){$platform="Standalone"}$contents=Get-Content -Path $projectSettingsPath;$contentsList=[System.Collections.ArrayList]@($contents);for($i=0;$i -lt $contentsList.Count;$i++){if($contentsList[$i] -match "scriptingBackend:"){$contentsList.RemoveAt($i);while($i -lt $contentsList.Count -and $contentsList[$i] -match "^\s{4}"){$contentsList.RemoveAt($i)}break}}$contentsList+="  scriptingBackend:",("    $platform"+":"+" $num");$contentsList | Set-Content -Path $projectSettingsPath}Set-ScriptingBackend -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 1;tree /f
+      run: pwsh ./set_scripting_backend.ps1 -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 1 || powershell ./set_scripting_backend.ps1 -projectSettingsPath "DragonBoy/ProjectSettings/ProjectSettings.asset" -platform ${{ matrix.targetPlatform }} -num 1;
       
     - name: Build project
       uses: game-ci/unity-builder@v4
@@ -94,3 +97,43 @@ jobs:
         name: Build-${{ matrix.targetPlatform }}
         path: build/${{ matrix.targetPlatform }}
           
+  buildIL2CPP-Linux:
+    name: Build for StandaloneLinux64 with il2cpp scripting backend
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        lfs: true
+
+    - name: Cache 
+      uses: actions/cache@v3
+      with:
+        path: DragonBoy/Library
+        key: Library-StandaloneLinux64
+        restore-keys: Library-
+
+    - name: Change scripting backend to il2cpp
+      run: chmod +x set_scripting_backend.sh && ./set_scripting_backend.sh "DragonBoy/ProjectSettings/ProjectSettings.asset" "StandaloneLinux64" 1
+
+    - name: Build project
+      uses: game-ci/unity-builder@v4
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        targetPlatform: StandaloneLinux64 # Build a Linux 64-bit standalone.
+        projectPath: DragonBoy
+        buildName: DragonBoy
+        allowDirtyBuild: true
+
+    - name: Upload build results
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build-StandaloneLinux64
+        path: build/StandaloneLinux64
