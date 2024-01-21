@@ -20,8 +20,10 @@ Set-ScriptingBackend() {
         platform="Standalone"
     fi
 
-    IFS=$'\n'
-    mapfile -t contentsList < "$projectSettingsPath"
+    contentsList=()
+    while IFS= read -r line; do
+        contentsList+=("$line")
+    done < "$projectSettingsPath"
 
     for ((i=0; i<${#contentsList[@]}; i++)); do
         if [[ ${contentsList[i]} =~ "scriptingBackend:" ]]; then
