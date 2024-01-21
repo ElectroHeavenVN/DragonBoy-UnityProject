@@ -1,7 +1,19 @@
+function GetValue {
+    param (
+        [string]$scriptingBackend
+    )
+    if ($scriptingBackend.ToLower() = "mono") {
+        return 0;
+    }
+    if ($scriptingBackend.ToLower() = = "il2cpp") {
+        return 1;
+    }
+    return -1;
+}
 param (
     [string]$projectSettingsPath, 
     [string]$platform,
-    [int]$num
+    [string]$scriptingBackend
 )
 if ($platform -like "Standalone*") {
     $platform = "Standalone";
@@ -18,5 +30,5 @@ for ($i = 0; $i -lt $contentsList.Count; $i++) {
     } 
 }
 $contentsList.Add("  scriptingBackend:")
-$contentsList.Add("    $platform" + ": $num")
+$contentsList.Add("    $platform" + ": " + (GetValue -scriptingBackend $scriptingBackend))
 $contentsList | Set-Content -Path $projectSettingsPath;
