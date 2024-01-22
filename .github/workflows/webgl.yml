@@ -1,4 +1,4 @@
-name: Build project for WebGL
+name: Build project for WebGL operating system
 on: workflow_dispatch
 jobs:
   build-WebGL:
