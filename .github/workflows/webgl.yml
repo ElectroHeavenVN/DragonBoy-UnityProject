@@ -1,7 +1,7 @@
 name: Build project for WebGL
 on: workflow_dispatch
 jobs:
-  build-Linux:
+  build-WebGL:
     name: Build for ${{ matrix.targetPlatform }} with ${{matrix.scriptingBackend}} scripting backend on Linux runner
     runs-on: ubuntu-latest
     strategy:
@@ -10,7 +10,6 @@ jobs:
         targetPlatform:
           - WebGL # Build to WebGL platform.
         scriptingBackend:
-          - Mono # 0
           - IL2CPP # 1
     steps:
       - name: Checkout
