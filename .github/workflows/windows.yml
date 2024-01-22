@@ -42,5 +42,5 @@ jobs:
       - name: Upload build results
         uses: actions/upload-artifact@v3
         with:
-          name: Build-${{ matrix.targetPlatform }}
+          name: Build-${{ matrix.targetPlatform }}-${{matrix.scriptingBackend}}
           path: build/${{ matrix.targetPlatform }}
