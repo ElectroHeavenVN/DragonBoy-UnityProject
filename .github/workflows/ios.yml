@@ -10,7 +10,6 @@ jobs:
         targetPlatform:
           - iOS # Build an iOS player.
         scriptingBackend:
-          - Mono # 0
           - IL2CPP # 1
     steps:
       - name: Checkout
