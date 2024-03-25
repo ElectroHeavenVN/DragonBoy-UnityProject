@@ -243,6 +243,10 @@ public class GamePad
 	{
 		if (GameScr.isAnalog != 0)
 		{
+			xZone = 0;
+			yZone = (GameCanvas.h >> 1) + 40;
+			wZone = GameCanvas.hw / 4 * 3 - 40;
+			hZone = GameCanvas.h;
 			g.drawImage(GameScr.imgAnalog1, xC, yC, mGraphics.HCENTER | mGraphics.VCENTER);
 			g.drawImage(GameScr.imgAnalog2, xM, yM, mGraphics.HCENTER | mGraphics.VCENTER);
 		}
@@ -262,7 +266,7 @@ public class GamePad
 			if (GameScr.isAnalog == 0)
 				return false;
 			bool flag = false;
-			return ((GameCanvas.px >= xZone && GameCanvas.px <= wZone && GameCanvas.py >= yZone && GameCanvas.py <= hZone) || GameCanvas.px >= GameCanvas.w - 50) ? true : false;
+			return ((GameCanvas.px >= xZone && GameCanvas.px <= xZone + wZone && GameCanvas.py >= yZone && GameCanvas.py <= yZone + hZone) || (GameCanvas.px >= xZone && GameCanvas.px <= GameCanvas.w && GameCanvas.py >= yZone && GameCanvas.py <= yZone + hZone) || GameCanvas.px >= GameCanvas.w - 50) ? true : false;
 		}
 		catch (Exception)
 		{

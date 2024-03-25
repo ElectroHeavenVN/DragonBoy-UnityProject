@@ -29,7 +29,7 @@ public class T2 : mResources
 		mResources.fusionForever = "Fusion dance forever";
 		mResources.fusion = "Fusion dance";
 		mResources.nhanngoc = "Receive gem";
-		mResources.vuilongnhapduthongtin = "Please enter complete information";
+		mResources.vuilongnhapduthongtin = "Please, enter the valid quantity";
 		mResources.choitiep = "Continue";
 		mResources.gohome = "Go home";
 		mResources.status = "Status";
@@ -496,7 +496,7 @@ public class T2 : mResources
 		mResources.want_to_trade = " want to trade with you, do you accept?";
 		mResources.hasJustUpgrade1 = "You have just upgrade ";
 		mResources.hasJustUpgrade2 = " to ";
-		mResources.potential_to_learn = "potential to Whis to learn";
+		mResources.potential_to_learn = "potential to Master to learn";
 		mResources.potential_point = "Potential points";
 		mResources.achievement_point = "Achievement point";
 		mResources.increase = "increase";
@@ -560,5 +560,7 @@ public class T2 : mResources
 		mResources.playNew = "New game";
 		mResources.playAcc = "Play acc";
 		mResources.not_register_yet = "Not register yet";
+		mResources.countDown_waitingroom = "CountDown: ";
+		mResources.potential_to_learn_tuyetKi = "potential to Whis to learn";
 	}
 }

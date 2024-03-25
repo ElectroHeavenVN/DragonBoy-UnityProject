@@ -3136,4 +3136,24 @@ public class Service
 			message.cleanup();
 		}
 	}
+
+	public void sendCT_ready(sbyte sub, sbyte sub_sub)
+	{
+		Message message = null;
+		try
+		{
+			message = new Message((sbyte)24);
+			message.writer().writeByte(sub);
+			message.writer().writeByte(sub_sub);
+			Res.err(" =====> SEND OPTION_HAT " + sub + "_" + sub_sub);
+			session.sendMessage(message);
+		}
+		catch (Exception)
+		{
+		}
+		finally
+		{
+			message.cleanup();
+		}
+	}
 }

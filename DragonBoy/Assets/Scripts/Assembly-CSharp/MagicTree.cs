@@ -89,7 +89,7 @@ public class MagicTree : Npc, IActionListener
 		}
 		if (indexEffTask < 0 || effTask == null || cTypePk != 0)
 			return;
-		SmallImage.drawSmallImage(g, effTask.arrEfInfo[indexEffTask].idImg, cx + effTask.arrEfInfo[indexEffTask].dx + SmallImage.smallImg[id][3] / 2 + 5, cy - 15 + effTask.arrEfInfo[indexEffTask].dy, 0, mGraphics.VCENTER | mGraphics.HCENTER);
+		SmallImage.drawSmallImage(g, effTask.arrEfInfo[indexEffTask].idImg, cx + effTask.arrEfInfo[indexEffTask].dx, cy - 15 + effTask.arrEfInfo[indexEffTask].dy, 0, mGraphics.VCENTER | mGraphics.HCENTER);
 		if (GameCanvas.gameTick % 2 == 0)
 		{
 			indexEffTask++;

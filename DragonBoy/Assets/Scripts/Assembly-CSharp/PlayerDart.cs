@@ -122,12 +122,21 @@ public class PlayerDart
 			charBelong.isUseSkillAfterCharge = false;
 			if (charBelong.isLockMove && charBelong.me && charBelong.statusMe != 14 && charBelong.statusMe != 5)
 				charBelong.isLockMove = false;
-			GameScr.gI().activeSuperPower(x, y);
+			if (charBelong.cgender == 2)
+			{
+				int num = -1;
+				num = ((!charBelong.me) ? charBelong.skillTemplateId : Char.myCharz().myskill.skillId);
+				if (num < 77 || num > 83)
+					GameScr.gI().activeSuperPower(x, y);
+			}
+			else
+				GameScr.gI().activeSuperPower(x, y);
 		}
 		charBelong.dart = null;
 		charBelong.isCreateDark = false;
 		charBelong.skillPaint = null;
 		charBelong.skillPaintRandomPaint = null;
+		charBelong.stopUseChargeSkill();
 	}
 
 	public void paint(mGraphics g)

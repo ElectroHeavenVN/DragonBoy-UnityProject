@@ -68,6 +68,14 @@ public class ChatPopup : Effect2, IActionListener
 
 	public int second;
 
+	private Point[] saoPoint = new Point[14];
+
+	private int indexStar;
+
+	private int indexStar2;
+
+	public bool[] starCuongHoa = new bool[20];
+
 	public static int numSlot = 7;
 
 	private int nMaxslot_duoi;
@@ -265,7 +273,6 @@ public class ChatPopup : Effect2, IActionListener
 		int num4 = ch;
 		if ((num <= 0 || num2 <= 0) && !GameCanvas.panel.isShow)
 			return;
-		PopUp.paintPopUp(g, num, num2, num3, num4, 16777215, false);
 		int num5 = 0;
 		if (c != null)
 		{
@@ -277,6 +284,7 @@ public class ChatPopup : Effect2, IActionListener
 			num5 = ((GameCanvas.gameTick % 10 <= 2) ? 1 : 0);
 			SmallImage.drawSmallImage(g, iconID, cx + num3 / 2, cy + ch - 15 + num5, 0, StaticObj.VCENTER_HCENTER);
 		}
+		PopUp.paintPopUp(g, num, num2, num3, num4, 16777215, false);
 		if (scr != null)
 		{
 			g.setClip(num, num2, num3, num4 - 16);
@@ -382,13 +390,29 @@ public class ChatPopup : Effect2, IActionListener
 		{
 			nMaxslot_tren = (maxStarSlot + 1) / 2;
 			nMaxslot_duoi = maxStarSlot - nMaxslot_tren;
+			int[] array3 = new int[maxStarSlot];
+			int[] array4 = new int[maxStarSlot];
 			for (int j = 0; j < nMaxslot_tren; j++)
 			{
 				g.drawImage(Panel.imgMaxStar, num + num3 / 2 - nMaxslot_tren * 20 / 2 + j * 20 + mGraphics.getImageWidth(Panel.imgMaxStar), num2 + num4 - 17, 3);
+				array3[j] = num + num3 / 2 - nMaxslot_tren * 20 / 2 + j * 20 + mGraphics.getImageWidth(Panel.imgMaxStar);
+				array4[j] = num2 + num4 - 17;
 			}
 			for (int k = 0; k < nMaxslot_duoi; k++)
 			{
 				g.drawImage(Panel.imgMaxStar, num + num3 / 2 - nMaxslot_duoi * 20 / 2 + k * 20 + mGraphics.getImageWidth(Panel.imgMaxStar), num2 + num4 - 8, 3);
+				array3[nMaxslot_tren + k] = num + num3 / 2 - nMaxslot_duoi * 20 / 2 + k * 20 + mGraphics.getImageWidth(Panel.imgMaxStar);
+				array4[nMaxslot_tren + k] = num2 + num4 - 8;
+			}
+			Res.err(maxStarSlot + "maxStarSlot");
+			if (maxStarSlot >= 7)
+			{
+				int num9 = 7;
+				for (int l = 7; l < maxStarSlot; l++)
+				{
+					if (starCuongHoa[l])
+						g.drawImage(Panel.imgStarCuongHoa, array3[l], array4[l], 3);
+				}
 			}
 			if (starSlot > 0)
 			{
@@ -396,37 +420,37 @@ public class ChatPopup : Effect2, IActionListener
 				if (starSlot >= nMaxslot_tren)
 				{
 					nslot_duoi = starSlot - nMaxslot_tren;
-					for (int l = 0; l < nMaxslot_tren; l++)
+					for (int m = 0; m < nMaxslot_tren; m++)
 					{
-						g.drawImage(imgStar, num + num3 / 2 - nMaxslot_tren * 20 / 2 + l * 20 + mGraphics.getImageWidth(imgStar), num2 + num4 - 17, 3);
+						g.drawImage(imgStar, num + num3 / 2 - nMaxslot_tren * 20 / 2 + m * 20 + mGraphics.getImageWidth(imgStar), num2 + num4 - 17, 3);
 					}
-					for (int m = 0; m < nslot_duoi; m++)
+					for (int n = 0; n < nslot_duoi; n++)
 					{
-						if (m + nMaxslot_tren >= numSlot)
+						if (n + nMaxslot_tren >= numSlot)
 							imgStar = Panel.imgStar8;
-						g.drawImage(imgStar, num + num3 / 2 - nMaxslot_duoi * 20 / 2 + m * 20 + mGraphics.getImageWidth(imgStar), num2 + num4 - 8, 3);
+						g.drawImage(imgStar, num + num3 / 2 - nMaxslot_duoi * 20 / 2 + n * 20 + mGraphics.getImageWidth(imgStar), num2 + num4 - 8, 3);
 					}
 				}
 				else
 				{
-					for (int n = 0; n < starSlot; n++)
+					for (int num10 = 0; num10 < starSlot; num10++)
 					{
-						g.drawImage(imgStar, num + num3 / 2 - nMaxslot_tren * 20 / 2 + n * 20 + mGraphics.getImageWidth(imgStar), num2 + num4 - 17, 3);
+						g.drawImage(imgStar, num + num3 / 2 - nMaxslot_tren * 20 / 2 + num10 * 20 + mGraphics.getImageWidth(imgStar), num2 + num4 - 17, 3);
 					}
 				}
 			}
 		}
 		else
 		{
-			for (int num9 = 0; num9 < maxStarSlot; num9++)
+			for (int num11 = 0; num11 < maxStarSlot; num11++)
 			{
-				g.drawImage(Panel.imgMaxStar, num + num3 / 2 - maxStarSlot * 20 / 2 + num9 * 20 + mGraphics.getImageWidth(Panel.imgMaxStar), num2 + num4 - 13, 3);
+				g.drawImage(Panel.imgMaxStar, num + num3 / 2 - maxStarSlot * 20 / 2 + num11 * 20 + mGraphics.getImageWidth(Panel.imgMaxStar), num2 + num4 - 13, 3);
 			}
 			if (starSlot > 0)
 			{
-				for (int num10 = 0; num10 < starSlot; num10++)
+				for (int num12 = 0; num12 < starSlot; num12++)
 				{
-					g.drawImage(Panel.imgStar, num + num3 / 2 - maxStarSlot * 20 / 2 + num10 * 20 + mGraphics.getImageWidth(Panel.imgStar), num2 + num4 - 13, 3);
+					g.drawImage(Panel.imgStar, num + num3 / 2 - maxStarSlot * 20 / 2 + num12 * 20 + mGraphics.getImageWidth(Panel.imgStar), num2 + num4 - 13, 3);
 				}
 			}
 		}

@@ -794,6 +794,8 @@ public class BackgroudEffect
 	{
 		int num = ((typeEff != 11) ? 4 : 3);
 		num = ((typeEff != 15) ? 4 : 4);
+		if (typeEff == 11)
+			PIXEL = 5;
 		for (int i = 0; i < sum; i++)
 		{
 			if (i % 3 == 0 && x[i] >= GameScr.cmx && x[i] <= GameCanvas.w + GameScr.cmx && y[i] >= GameScr.cmy && y[i] <= GameCanvas.h + GameScr.cmy && img != null)
@@ -805,6 +807,8 @@ public class BackgroudEffect
 	{
 		int num = ((typeEff != 11) ? 4 : 3);
 		num = ((typeEff != 15) ? 4 : 4);
+		if (typeEff == 11)
+			PIXEL = 5;
 		for (int i = 0; i < sum; i++)
 		{
 			if (i % 3 != 0 && x[i] >= GameScr.cmx && x[i] <= GameCanvas.w + GameScr.cmx && y[i] >= GameScr.cmy && y[i] <= GameCanvas.h + GameScr.cmy && img != null)

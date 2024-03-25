@@ -489,7 +489,8 @@ public class T3 : mResources
 		mResources.want_to_trade = "ingin bertukar dengan kamu, terima?";
 		mResources.hasJustUpgrade1 = "Kamu baru saja mengupgrade";
 		mResources.hasJustUpgrade2 = "ke";
-		mResources.potential_to_learn = "potential untuk Whis untuk belajar";
+		mResources.potential_to_learn = "potential untuk Master untuk belajar";
+		mResources.potential_to_learn_tuyetKi = "potential untuk Whis untuk belajar";
 		mResources.potential_point = "Potential points";
 		mResources.achievement_point = " Achievement point ";
 		mResources.increase = "bertambah";
@@ -546,5 +547,6 @@ public class T3 : mResources
 		mResources.playNew = "Game baru";
 		mResources.playAcc = "Account bermain";
 		mResources.not_register_yet = "Tidak mendaftar belum";
+		mResources.countDown_waitingroom = "CountDown: ";
 	}
 }

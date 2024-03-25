@@ -29,7 +29,7 @@ public class T1 : mResources
 		mResources.fusionForever = "Hợp thể vĩnh viễn";
 		mResources.fusion = "Hợp thể";
 		mResources.nhanngoc = "Nhận ngọc";
-		mResources.vuilongnhapduthongtin = "Vui lòng nhập đủ thông tin";
+		mResources.vuilongnhapduthongtin = "Vui lòng nhập đúng số lượng cho phép";
 		mResources.choitiep = "Chơi tiếp";
 		mResources.gohome = "Về nhà";
 		mResources.status = "Trạng thái";
@@ -403,7 +403,7 @@ public class T1 : mResources
 		mResources.money_trade = "Số tiền giao dịch";
 		mResources.GETOUT = "Lấy ra";
 		mResources.MOVEOUT = "Bỏ ra";
-		mResources.MOVEFORPET = "Sử dụng\ncho\nđệ tử";
+		mResources.MOVEFORPET = "Cho đệ tử";
 		mResources.GETOUTMONEY = "Rút xu";
 		mResources.GETINMONEY = "Cất xu";
 		mResources.SENDMONEY = "Chuyển xu";
@@ -444,7 +444,7 @@ public class T1 : mResources
 		mResources.want_to_trade = " muốn giao dịch với bạn, bạn có đồng ý không ?";
 		mResources.hasJustUpgrade1 = "Bạn vừa nâng cấp ";
 		mResources.hasJustUpgrade2 = " sang cấp ";
-		mResources.potential_to_learn = "tiềm năng đến Whis học";
+		mResources.potential_to_learn = "tiềm năng đến Sư phụ để học";
 		mResources.potential_point = "Điểm tiềm năng";
 		mResources.achievement_point = "Điểm thành tích";
 		mResources.increase = "tăng";
@@ -508,5 +508,7 @@ public class T1 : mResources
 		mResources.playNew = "Chơi mới";
 		mResources.playAcc = "Chơi TK";
 		mResources.not_register_yet = "Chưa đăng ký";
+		mResources.countDown_waitingroom = "Vui lòng chờ: ";
+		mResources.potential_to_learn_tuyetKi = "tiềm năng đến Whis để học";
 	}
 }

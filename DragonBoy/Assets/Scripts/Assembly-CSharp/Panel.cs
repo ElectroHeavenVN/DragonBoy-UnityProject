@@ -105,6 +105,10 @@ public class Panel : IActionListener, IChatable
 
 	public static Image imgStar8;
 
+	public static Image imgStar9;
+
+	public static Image imgStarCuongHoa;
+
 	public static Image imgNew;
 
 	public static Image imgXu;
@@ -798,6 +802,8 @@ public class Panel : IActionListener, IChatable
 		imgStar = GameCanvas.loadImage("/mainImage/star.png");
 		imgMaxStar = GameCanvas.loadImage("/mainImage/starE.png");
 		imgStar8 = GameCanvas.loadImage("/mainImage/star8.png");
+		imgStar9 = mSystem.loadImage("/mainImage/star9.png");
+		imgStarCuongHoa = mSystem.loadImage("/mainImage/starCH.png");
 		imgNew = GameCanvas.loadImage("/mainImage/new.png");
 		imgTicket = GameCanvas.loadImage("/mainImage/ticket12.png");
 	}
@@ -1402,24 +1408,34 @@ public class Panel : IActionListener, IChatable
 							text = text + "\n|1|1|" + empty;
 						if (item.itemOption[k].param == 0)
 							text = text + "\n|0|1|" + empty;
-						continue;
 					}
-					empty = item.itemOption[k].getOptionString();
-					if (!empty.Equals(string.Empty) && item.itemOption[k].optionTemplate.id != 72)
+					else
 					{
-						if (item.itemOption[k].optionTemplate.id == 102)
+						empty = item.itemOption[k].getOptionString();
+						if (!empty.Equals(string.Empty))
 						{
-							cp.starSlot = (sbyte)item.itemOption[k].param;
-							Res.outz("STAR SLOT= " + cp.starSlot);
+							if (item.itemOption[k].optionTemplate.id == 72)
+								continue;
+							if (item.itemOption[k].optionTemplate.id == 102)
+								cp.starSlot = (sbyte)item.itemOption[k].param;
+							else if (item.itemOption[k].optionTemplate.id == 107)
+							{
+								cp.maxStarSlot = (sbyte)item.itemOption[k].param;
+							}
+							else
+							{
+								text = text + "\n|1|1|" + empty;
+							}
 						}
-						else if (item.itemOption[k].optionTemplate.id == 107)
+					}
+					if (item.itemOption[k].optionTemplate.id != 228)
+						continue;
+					Res.outz("========>>> " + item.itemOption[k].optionTemplate.name + "_" + item.itemOption[k].param);
+					if (item.itemOption[k].param > 7)
+					{
+						for (int l = 0; l < item.itemOption[k].param - 7; l++)
 						{
-							cp.maxStarSlot = (sbyte)item.itemOption[k].param;
-							Res.outz("STAR SLOT= " + cp.maxStarSlot);
-						}
-						else
-						{
-							text = text + "\n|1|1|" + empty;
+							cp.starCuongHoa[l + 7] = true;
 						}
 					}
 				}
@@ -3166,6 +3182,7 @@ public class Panel : IActionListener, IChatable
 				((Command)vPlayerMenu.elementAt(selected)).performAction();
 			}
 			vPlayerMenu.removeAllElements();
+			vPlayerMenu_id.removeAllElements();
 			charMenu = null;
 		}
 		if (cmRun != 0 && !pointerIsDowning)
@@ -3232,7 +3249,7 @@ public class Panel : IActionListener, IChatable
 		}
 		else if (idIcon != -1)
 		{
-			SmallImage.drawSmallImage(g, idIcon, num, num2, 0, 3);
+			SmallImage.drawSmallImage(g, idIcon, cp.cx + 8, cp.cy + 2, 0, mGraphics.TOP | mGraphics.LEFT);
 		}
 		if (currItem != null && currItem.template.type != 5)
 		{
@@ -3311,7 +3328,13 @@ public class Panel : IActionListener, IChatable
 			return;
 		}
 		GameCanvas.paintz.paintFrameSimple(X, Y, W, H, g);
-		paintTopInfo(g);
+		try
+		{
+			paintTopInfo(g);
+		}
+		catch (Exception)
+		{
+		}
 		paintBottomMoneyInfo(g);
 		paintTab(g);
 		switch (type)
@@ -3426,7 +3449,7 @@ public class Panel : IActionListener, IChatable
 		}
 		GameScr.resetTranslate(g);
 		paintDetail(g);
-		if (cmx == cmtoX)
+		if (cmx == cmtoX && !GameCanvas.menu.showMenu)
 			cmdClose.paint(g);
 		if (tabIcon != null && tabIcon.isShow)
 			tabIcon.paint(g);
@@ -3505,7 +3528,7 @@ public class Panel : IActionListener, IChatable
 				{
 					string text = string.Empty;
 					mFont mFont2 = mFont.tahoma_7_green2;
-					if (item.isMe != 0 && typeShop == 2 && currentTabIndex <= 3 && !Equals(GameCanvas.panel2))
+					if (item.isMe != 0 && typeShop == 2 && currentTabIndex <= 3 && !Equals(GameCanvas.panel2) && item.template.name.Length < 20)
 						mFont2 = mFont.tahoma_7b_green;
 					if (item.itemOption != null)
 					{
@@ -4013,8 +4036,11 @@ public class Panel : IActionListener, IChatable
 			else
 			{
 				Skill skill3 = skillTemplate.skills[0];
+				string st6 = mResources.need_upper + " " + Res.formatNumber2(skill3.powRequire) + " " + mResources.potential_to_learn;
+				if (skill3.template.id == 24 || skill3.template.id == 25 || skill3.template.id == 26)
+					st6 = mResources.need_upper + " " + Res.formatNumber2(skill3.powRequire) + " " + mResources.potential_to_learn_tuyetKi;
 				mFont.tahoma_7b_green.drawString(g, skillTemplate.name, num2 + 5, num3 + 3, 0);
-				mFont.tahoma_7_green2.drawString(g, mResources.need_upper + " " + Res.formatNumber2(skill3.powRequire) + " " + mResources.potential_to_learn, num2 + 5, num3 + 15, 0);
+				mFont.tahoma_7_green2.drawString(g, st6, num2 + 5, num3 + 15, 0);
 			}
 		}
 		paintScrollArrow(g);
@@ -5401,7 +5427,7 @@ public class Panel : IActionListener, IChatable
 		if (Char.myPetz().cPower > 0)
 			mFont.tahoma_7_yellow.drawString(g, (!Char.myPetz().me) ? Char.myPetz().currStrLevel : Char.myPetz().getStrLevel(), X + 60, 16, mFont.LEFT, mFont.tahoma_7_grey);
 		if (Char.myPetz().cDamFull > 0)
-			mFont.tahoma_7_yellow.drawString(g, mResources.hit_point + ": " + Char.myPetz().cDamFull, X + 60, 27, mFont.LEFT, mFont.tahoma_7_grey);
+			mFont.tahoma_7_yellow.drawString(g, mResources.hit_point + " :" + Char.myPetz().cDamFull, X + 60, 27, mFont.LEFT, mFont.tahoma_7_grey);
 		if (Char.myPetz().cMaxStamina > 0)
 		{
 			mFont.tahoma_7_yellow.drawString(g, mResources.vitality, X + 60, 38, mFont.LEFT, mFont.tahoma_7_grey);
@@ -6156,7 +6182,8 @@ public class Panel : IActionListener, IChatable
 			isClose = false;
 			return;
 		}
-		if (isTypeShop())
+		cp = null;
+		if (isTypeShop() || TileMap.mapID == 45)
 			Char.myCharz().resetPartTemp();
 		if (chatTField != null && type == 13 && chatTField.isShow)
 			chatTField = null;
@@ -6193,7 +6220,8 @@ public class Panel : IActionListener, IChatable
 			isClose = false;
 			return;
 		}
-		if (isTypeShop())
+		cp = null;
+		if (isTypeShop() || TileMap.mapID == 45)
 			Char.myCharz().resetPartTemp();
 		if (chatTField != null && type == 13 && chatTField.isShow)
 			chatTField = null;
@@ -6753,7 +6781,7 @@ public class Panel : IActionListener, IChatable
 			}
 			currItem = null;
 			MyVector myVector = new MyVector();
-			if (isnewInventory && isnewInventory)
+			if (isnewInventory)
 			{
 				currItem = itemInvenNew;
 				if (newSelected == 0)
@@ -6854,6 +6882,7 @@ public class Panel : IActionListener, IChatable
 			switch (selected)
 			{
 			case 0:
+				hide();
 				doRada();
 				break;
 			case 1:
@@ -6920,6 +6949,7 @@ public class Panel : IActionListener, IChatable
 		switch (selected)
 		{
 		case 0:
+			hide();
 			doRada();
 			break;
 		case 1:
@@ -8437,12 +8467,26 @@ public class Panel : IActionListener, IChatable
 		}
 		else if (chatTField.strChat.Equals(mResources.kiguiXuchat))
 		{
-			Service.gI().kigui(0, currItem.itemId, 0, int.Parse(chatTField.tfChat.getText()), 1);
+			try
+			{
+				Service.gI().kigui(0, currItem.itemId, 0, int.Parse(chatTField.tfChat.getText()), 1);
+			}
+			catch (Exception)
+			{
+				GameCanvas.startOKDlg(mResources.input_money_wrong);
+			}
 			chatTField.isShow = false;
 		}
 		else if (chatTField.strChat.Equals(mResources.kiguiXuchat + " "))
 		{
-			Service.gI().kigui(0, currItem.itemId, 0, int.Parse(chatTField.tfChat.getText()), currItem.quantilyToBuy);
+			try
+			{
+				Service.gI().kigui(0, currItem.itemId, 0, int.Parse(chatTField.tfChat.getText()), currItem.quantilyToBuy);
+			}
+			catch (Exception)
+			{
+				GameCanvas.startOKDlg(mResources.input_money_wrong);
+			}
 			chatTField.isShow = false;
 		}
 		else if (chatTField.strChat.Equals(mResources.kiguiLuongchat))

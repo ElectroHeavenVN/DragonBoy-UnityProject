@@ -199,7 +199,7 @@ public class Teleport
 				Char.myCharz().cy = y - 30;
 				Char.myCharz().statusMe = 4;
 				GameScr.cmtoX = x - GameScr.gW2;
-				GameScr.cmtoY = y - GameScr.gH23;
+				GameScr.cmtoY = y - GameScr.gH23 - 1;
 				GameScr.info1.isUpdate = false;
 			}
 			if (GameScr.findCharInMap(id) != null && !isMe && type == 1 && GameScr.findCharInMap(id).isTeleport)
@@ -316,7 +316,7 @@ public class Teleport
 				if (type == 0)
 				{
 					GameScr.cmtoX = x - GameScr.gW2;
-					GameScr.cmtoY = y - GameScr.gH23;
+					GameScr.cmtoY = y - GameScr.gH23 - 1;
 				}
 				if (type == 1)
 					GameScr.info1.isUpdate = true;

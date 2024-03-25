@@ -20,6 +20,10 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static sbyte[] language;
 
+	public static sbyte[] typeSv;
+
+	public static sbyte[] isNew;
+
 	private Command[] cmd;
 
 	private Command cmdCallHotline;
@@ -30,17 +34,17 @@ public class ServerListScreen : mScreen, IActionListener
 
 	private int lY;
 
-	public static string smartPhoneVN = "Vũ trụ 1:dragon1.teamobi.com:14445:0,Vũ trụ 2:dragon2.teamobi.com:14445:0,Vũ trụ 3:dragon3.teamobi.com:14445:0,Vũ trụ 4:dragon4.teamobi.com:14445:0,Vũ trụ 5:dragon5.teamobi.com:14445:0,Vũ trụ 6:dragon6.teamobi.com:14445:0,Vũ trụ 7:dragon7.teamobi.com:14445:0,Vũ trụ 8:dragon10.teamobi.com:14446:0,Vũ trụ 9:dragon10.teamobi.com:14447:0,Vũ trụ 10:dragon10.teamobi.com:14445:0,Vũ trụ 11:dragon11.teamobi.com:14445:0,Võ đài liên vũ trụ:dragonwar.teamobi.com:20000:0,Universe 1:dragon.indonaga.com:14445:1,Naga:dragon.indonaga.com:14446:2,0,0";
+	public static string smartPhoneVN = "Vũ trụ 1:dragon1.teamobi.com:14445:0:0:0,Vũ trụ 2:dragon2.teamobi.com:14445:0:0:0,Vũ trụ 3:dragon3.teamobi.com:14445:0:0:0,Vũ trụ 4:dragon4.teamobi.com:14445:0:0:0,Vũ trụ 5:dragon5.teamobi.com:14445:0:0:0,Vũ trụ 6:dragon6.teamobi.com:14445:0:0:0,Vũ trụ 7:dragon7.teamobi.com:14445:0:0:0,Vũ trụ 8:dragon10.teamobi.com:14446:0:0:0,Vũ trụ 9:dragon10.teamobi.com:14447:0:0:0,Vũ trụ 10:dragon10.teamobi.com:14445:0:0:0,Vũ trụ 11:dragon11.teamobi.com:14445:0:0:0,Võ đài liên vũ trụ:dragonwar.teamobi.com:20000:0:0:0,Universe 1:dragon.indonaga.com:14445:1:0:0,Naga:dragon.indonaga.com:14446:2:0:0,0,0";
 
-	public static string javaVN = "Vũ trụ 1:112.213.94.23:14445:0,Vũ trụ 2:210.211.109.199:14445:0,Vũ trụ 3:112.213.85.88:14445:0,Vũ trụ 4:27.0.12.164:14445:0,Vũ trụ 5:27.0.12.16:14445:0,Vũ trụ 6:27.0.12.173:14445:0,Vũ trụ 7:112.213.94.223:14445:0,Vũ trụ 8:27.0.14.66:14446:0,Vũ trụ 9:27.0.14.66:14447:0,Vũ trụ 10:27.0.14.66:14445:0,Vũ trụ 11:112.213.85.35:14445:0,Võ đài liên vũ trụ:27.0.12.173:20000:0,Universe 1:52.74.230.22:14445:1,Naga:52.74.230.22:14446:2,0,0";
+	public static string javaVN = "Vũ trụ 1:112.213.94.23:14445:0:0:0,Vũ trụ 2:210.211.109.199:14445:0:0:0,Vũ trụ 3:112.213.85.88:14445:0:0:0,Vũ trụ 4:27.0.12.164:14445:0:0:0,Vũ trụ 5:27.0.12.16:14445:0:0:0,Vũ trụ 6:27.0.12.173:14445:0:0:0,Vũ trụ 7:112.213.94.223:14445:0:0:0,Vũ trụ 8:27.0.14.66:14446:0:0:0,Vũ trụ 9:27.0.14.66:14447:0:0:0,Vũ trụ 10:27.0.14.66:14445:0:0:0,Vũ trụ 11:112.213.85.35:14445:0:0:0,Võ đài liên vũ trụ:27.0.12.173:20000:0:0:0,Universe 1:52.74.230.22:14445:1:0:0,Naga:52.74.230.22:14446:2:0:0,0,0";
 
-	public static string smartPhoneIn = "Naga:dragon.indonaga.com:14446:2,2,0";
+	public static string smartPhoneIn = "Naga:dragon.indonaga.com:14446:2:0:0,2,0";
 
-	public static string javaIn = "Naga:52.74.230.22:14446:2,2,0";
+	public static string javaIn = "Naga:52.74.230.22:14446:2:0:0,2,0";
 
-	public static string smartPhoneE = "Universe 1:dragon.indonaga.com:14445:1,1,0";
+	public static string smartPhoneE = "Universe 1:dragon.indonaga.com:14445:1:0:0,1,0";
 
-	public static string javaE = "Universe 1:52.74.230.22:14445:1,1,0";
+	public static string javaE = "Universe 1:52.74.230.22:14445:1:0:0,1,0";
 
 	public static string linkGetHost = "http://sv1.ngocrongonline.com/game/ngocrong031_t.php";
 
@@ -61,6 +65,8 @@ public class ServerListScreen : mScreen, IActionListener
 	public static bool waitToLogin;
 
 	public static int tWaitToLogin;
+
+	public static string RMS_NRlink = "NRlink3";
 
 	public static int[] lengthServer = new int[3];
 
@@ -258,12 +264,14 @@ public class ServerListScreen : mScreen, IActionListener
 	{
 		lengthServer = new int[3];
 		string[] array = Res.split(str.Trim(), ",", 0);
-		Res.outz("tem leng= " + array.Length);
+		Res.outz(">>> getServerList= " + str);
 		mResources.loadLanguague(sbyte.Parse(array[array.Length - 2]));
 		nameServer = new string[array.Length - 2];
 		address = new string[array.Length - 2];
 		port = new short[array.Length - 2];
 		language = new sbyte[array.Length - 2];
+		typeSv = new sbyte[array.Length - 2];
+		isNew = new sbyte[array.Length - 2];
 		hasConnected = new bool[2];
 		for (int i = 0; i < array.Length - 2; i++)
 		{
@@ -272,6 +280,22 @@ public class ServerListScreen : mScreen, IActionListener
 			address[i] = array2[1];
 			port[i] = short.Parse(array2[2]);
 			language[i] = sbyte.Parse(array2[3].Trim());
+			try
+			{
+				typeSv[i] = sbyte.Parse(array2[4].Trim());
+			}
+			catch (Exception)
+			{
+				typeSv[i] = 0;
+			}
+			try
+			{
+				isNew[i] = sbyte.Parse(array2[5].Trim());
+			}
+			catch (Exception)
+			{
+				isNew[i] = 0;
+			}
 			lengthServer[language[i]]++;
 		}
 		serverPriority = sbyte.Parse(array[array.Length - 1]);
@@ -370,6 +394,7 @@ public class ServerListScreen : mScreen, IActionListener
 		initCommand();
 		loadScreen = true;
 		countDieConnect = 0;
+		Controller.isConnectOK = false;
 		testConnect = -1;
 		isAutoConect = true;
 	}
@@ -524,10 +549,26 @@ public class ServerListScreen : mScreen, IActionListener
 				dataOutputStream.writeUTF(address[i]);
 				dataOutputStream.writeShort(port[i]);
 				dataOutputStream.writeByte(language[i]);
+				try
+				{
+					dataOutputStream.writeByte(typeSv[i]);
+				}
+				catch (Exception)
+				{
+					dataOutputStream.writeByte(0);
+				}
+				try
+				{
+					dataOutputStream.writeByte(isNew[i]);
+				}
+				catch (Exception)
+				{
+					dataOutputStream.writeByte(0);
+				}
 			}
 			serverPriority = (sbyte)((!mSystem.isTest) ? serverPriority : (serverPriority + 5));
 			dataOutputStream.writeByte(serverPriority);
-			Rms.saveRMS("NRlink2", dataOutputStream.toByteArray());
+			Rms.saveRMS(RMS_NRlink, dataOutputStream.toByteArray());
 			dataOutputStream.close();
 			SplashScr.loadIP();
 		}
@@ -548,7 +589,7 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static void loadIP()
 	{
-		sbyte[] array = Rms.loadRMS("NRlink2");
+		sbyte[] array = Rms.loadRMS(RMS_NRlink);
 		if (array == null)
 		{
 			getServerList(linkDefault);
@@ -566,12 +607,30 @@ public class ServerListScreen : mScreen, IActionListener
 			address = new string[b];
 			port = new short[b];
 			language = new sbyte[b];
+			typeSv = new sbyte[b];
+			isNew = new sbyte[b];
 			for (int i = 0; i < b; i++)
 			{
 				nameServer[i] = dataInputStream.readUTF();
 				address[i] = dataInputStream.readUTF();
 				port[i] = dataInputStream.readShort();
 				language[i] = dataInputStream.readByte();
+				try
+				{
+					typeSv[i] = dataInputStream.readByte();
+				}
+				catch (Exception)
+				{
+					typeSv[i] = 0;
+				}
+				try
+				{
+					isNew[i] = dataInputStream.readByte();
+				}
+				catch (Exception)
+				{
+					isNew[i] = 0;
+				}
 				lengthServer[language[i]]++;
 			}
 			serverPriority = dataInputStream.readByte();
@@ -581,44 +640,6 @@ public class ServerListScreen : mScreen, IActionListener
 		catch (Exception)
 		{
 		}
-	}
-
-	public static string[] loadIP_2()
-	{
-		string[] array = null;
-		sbyte[] array2 = Rms.loadRMS("NRlink2");
-		if (array2 == null)
-			return null;
-		DataInputStream dataInputStream = new DataInputStream(array2);
-		if (dataInputStream == null)
-			return null;
-		try
-		{
-			lengthServer = new int[3];
-			dataInputStream.readByte();
-			sbyte b = dataInputStream.readByte();
-			nameServer = new string[b];
-			address = new string[b];
-			port = new short[b];
-			language = new sbyte[b];
-			array = new string[b];
-			Res.outz("len sv == " + b);
-			for (int i = 0; i < b; i++)
-			{
-				nameServer[i] = dataInputStream.readUTF();
-				address[i] = dataInputStream.readUTF();
-				port[i] = dataInputStream.readShort();
-				language[i] = dataInputStream.readByte();
-				lengthServer[language[i]]++;
-				array[i] = nameServer[i] + ":" + address[i] + ":" + port[i] + ":" + language[i];
-			}
-			serverPriority = dataInputStream.readByte();
-			dataInputStream.close();
-		}
-		catch (Exception)
-		{
-		}
-		return array;
 	}
 
 	public override void switchToMe()
@@ -682,6 +703,7 @@ public class ServerListScreen : mScreen, IActionListener
 		stopDownload = true;
 		GameCanvas.serverScreen.show2();
 		isGetData = false;
+		mSystem.println(">>>>>isGetData: " + isGetData);
 		cmdDownload.isFocus = true;
 		center = new Command(string.Empty, this, 2, null);
 	}
@@ -699,6 +721,7 @@ public class ServerListScreen : mScreen, IActionListener
 			loadScreen = true;
 			testConnect = 0;
 			isGetData = false;
+			mSystem.println(">>>>>isGetData: " + isGetData);
 			Rms.clearAll();
 			switchToMe();
 		}
@@ -722,6 +745,7 @@ public class ServerListScreen : mScreen, IActionListener
 				{
 					cmdDownload.isFocus = true;
 					center = new Command(string.Empty, this, 4, null);
+					mSystem.println(">>>>>isGetData: " + isGetData);
 				}
 				isGetData = true;
 			}
@@ -926,6 +950,7 @@ public class ServerListScreen : mScreen, IActionListener
 		percent = 0;
 		bigOk = false;
 		isGetData = false;
+		mSystem.println(">>>>>isGetData: " + isGetData);
 		p = 0;
 		demPercent = 0;
 		strWait = mResources.PLEASEWAIT;

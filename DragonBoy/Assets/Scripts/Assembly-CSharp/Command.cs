@@ -52,6 +52,8 @@ public class Command
 
 	public bool cmdClosePanel;
 
+	public bool isPaintNew;
+
 	public Command(string caption, IActionListener actionListener, int action, object p, int x, int y)
 	{
 		this.caption = caption;
@@ -150,27 +152,15 @@ public class Command
 		}
 		if (caption != string.Empty)
 		{
-			if (type == 1)
-			{
-				if (!isFocus)
-					paintOngMau(btn0left, btn0mid, btn0right, x, y, 160, g);
-				else
-					paintOngMau(btn1left, btn1mid, btn1right, x, y, 160, g);
-			}
-			else if (!isFocus)
-			{
-				paintOngMau(btn0left, btn0mid, btn0right, x, y, 76, g);
-			}
+			if (!isFocus)
+				paintOngMau(btn0left, btn0mid, btn0right, x, y, w, g);
 			else
-			{
-				paintOngMau(btn1left, btn1mid, btn1right, x, y, 76, g);
-			}
+				paintOngMau(btn1left, btn1mid, btn1right, x, y, w, g);
 		}
-		int num = ((type != 1) ? (x + 38) : (x + hw));
 		if (!isFocus)
-			mFont.tahoma_7b_dark.drawString(g, caption, num, y + 7, 2);
+			mFont.tahoma_7b_dark.drawString(g, caption, x + w / 2, y + 7, 2);
 		else
-			mFont.tahoma_7b_green2.drawString(g, caption, num, y + 7, 2);
+			mFont.tahoma_7b_green2.drawString(g, caption, x + w / 2, y + 7, 2);
 	}
 
 	public static void paintOngMau(Image img0, Image img1, Image img2, int x, int y, int size, mGraphics g)

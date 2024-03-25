@@ -1,4 +1,5 @@
 using System;
+using Assets.src.e;
 using Assets.src.g;
 using UnityEngine;
 
@@ -41,6 +42,8 @@ public class GameCanvas : IActionListener
 	public static bool isPointerClick;
 
 	public static bool isPointerJustRelease;
+
+	public static bool isPointerSelect;
 
 	public static bool isPointerMove;
 
@@ -171,6 +174,10 @@ public class GameCanvas : IActionListener
 	private long timefps = mSystem.currentTimeMillis() + 1000;
 
 	private long timeup = mSystem.currentTimeMillis() + 1000;
+
+	public static int isRequestMapID = -1;
+
+	public static long waitingTimeChangeMap;
 
 	private static int dir_ = -1;
 
@@ -478,7 +485,7 @@ public class GameCanvas : IActionListener
 		}
 		ServerListScreen.createDeleteRMS();
 		serverScr = new ServerScr();
-		chooseCharScr = new ChooseCharScr();
+		loginScr = new LoginScr();
 	}
 
 	public static GameCanvas gI()
@@ -500,6 +507,34 @@ public class GameCanvas : IActionListener
 
 	public void update()
 	{
+		if (gameTick % 100 == 0)
+			;
+		if (isRequestMapID == 1 && waitingTimeChangeMap < mSystem.currentTimeMillis())
+		{
+			waitingTimeChangeMap = mSystem.currentTimeMillis();
+			isRequestMapID = -1;
+			Char.isLoadingMap = false;
+			endDlg();
+			mSystem.onConnectionFail();
+		}
+		if (isRequestMapID == 2 && waitingTimeChangeMap < mSystem.currentTimeMillis() && gameTick % 2 == 0 && currentScreen != null)
+		{
+			if (currentScreen == GameScr.gI())
+			{
+				if (Char.isLoadingMap)
+					Char.isLoadingMap = false;
+				if (ServerListScreen.waitToLogin)
+					ServerListScreen.waitToLogin = false;
+			}
+			if (SmallImage.vt_images_watingDowload.size() > 0)
+			{
+				Small small = (Small)SmallImage.vt_images_watingDowload.elementAt(0);
+				Service.gI().requestIcon(small.id);
+				SmallImage.vt_images_watingDowload.removeElementAt(0);
+			}
+			if (Effect.dowloadEff.size() <= 0)
+				;
+		}
 		if (mSystem.currentTimeMillis() > timefps)
 		{
 			timefps += 1000L;
@@ -631,10 +666,10 @@ public class GameCanvas : IActionListener
 			if (resetToLoginScr)
 			{
 				resetToLoginScr = false;
-				doResetToLoginScr(serverScreen);
+				doResetToLoginScr(loginScr);
 			}
 			debug("Zzz", 0);
-			if (Controller.isConnectOK)
+			if ((currentScreen != serverScr || !serverScr.isPaintNewUi) && Controller.isConnectOK)
 			{
 				if (Controller.isMain)
 				{
@@ -692,19 +727,28 @@ public class GameCanvas : IActionListener
 				if (currentDialog != null && currentDialog.left != null && currentDialog.left.actionListener != null)
 					currentDialog.left.performAction();
 			}
-			if (currentScreen == null || !(currentScreen is GameScr))
-				return;
-			xThongBaoTranslate += dir_ * 2;
-			if (xThongBaoTranslate - Panel.imgNew.getWidth() <= 60)
+			if (currentScreen != null && currentScreen is GameScr)
 			{
-				dir_ = 0;
-				tickWaitThongBao++;
-				if (tickWaitThongBao > 150)
+				xThongBaoTranslate += dir_ * 2;
+				if (xThongBaoTranslate - Panel.imgNew.getWidth() <= 60)
 				{
-					tickWaitThongBao = 0;
-					thongBaoTest = null;
+					dir_ = 0;
+					tickWaitThongBao++;
+					if (tickWaitThongBao > 150)
+					{
+						tickWaitThongBao = 0;
+						thongBaoTest = null;
+					}
 				}
 			}
+			if (currentScreen != null && currentScreen.Equals(GameScr.gI()))
+			{
+				if (GameScr.info1 != null)
+					GameScr.info1.update();
+				if (GameScr.info2 != null)
+					GameScr.info2.update();
+			}
+			isPointerSelect = false;
 		}
 		catch (Exception)
 		{
@@ -809,6 +853,7 @@ public class GameCanvas : IActionListener
 
 	public static void connect()
 	{
+		Debug.LogError(">>connect:" + GameMidlet.IP + ":" + GameMidlet.PORT);
 		if (!Session_ME.gI().isConnected())
 			Session_ME.gI().connect(GameMidlet.IP, GameMidlet.PORT);
 	}
@@ -1107,7 +1152,7 @@ public class GameCanvas : IActionListener
 			{
 				if (currentScreen == GameScr.gI())
 				{
-					if (TileMap.mapID == 137 || TileMap.mapID == 115 || TileMap.mapID == 117 || TileMap.mapID == 118 || TileMap.mapID == 120 || TileMap.isMapDouble)
+					if (TileMap.mapID != 172 && (TileMap.mapID == 137 || TileMap.mapID == 115 || TileMap.mapID == 117 || TileMap.mapID == 118 || TileMap.mapID == 120 || TileMap.isMapDouble))
 					{
 						g.setColor(0);
 						g.fillRect(0, 0, w, h);
@@ -2158,6 +2203,7 @@ public class GameCanvas : IActionListener
 
 	public void pointerDragged(int x, int y)
 	{
+		isPointerSelect = false;
 		if (Res.abs(x - pxLast) >= 10 || Res.abs(y - pyLast) >= 10)
 		{
 			isPointerClick = false;
@@ -2181,10 +2227,11 @@ public class GameCanvas : IActionListener
 
 	public void pointerPressed(int x, int y)
 	{
+		isPointerSelect = false;
 		isPointerJustRelease = false;
 		isPointerJustDown = true;
 		isPointerDown = true;
-		isPointerClick = true;
+		isPointerClick = false;
 		isPointerMove = false;
 		lastTimePress = mSystem.currentTimeMillis();
 		pxFirst = x;
@@ -2197,9 +2244,12 @@ public class GameCanvas : IActionListener
 
 	public void pointerReleased(int x, int y)
 	{
+		if (!isPointerMove)
+			isPointerSelect = true;
 		isPointerDown = false;
 		isPointerJustRelease = true;
 		isPointerMove = false;
+		isPointerClick = true;
 		mScreen.keyTouch = -1;
 		px = x;
 		py = y;
@@ -2208,6 +2258,15 @@ public class GameCanvas : IActionListener
 	public static bool isPointerHoldIn(int x, int y, int w, int h)
 	{
 		if (!isPointerDown && !isPointerJustRelease)
+			return false;
+		if (px >= x && px <= x + w && py >= y && py <= y + h)
+			return true;
+		return false;
+	}
+
+	public static bool isPointSelect(int x, int y, int w, int h)
+	{
+		if (!isPointerSelect)
 			return false;
 		if (px >= x && px <= x + w && py >= y && py <= y + h)
 			return true;
@@ -2286,6 +2345,7 @@ public class GameCanvas : IActionListener
 			else if (menu.showMenu)
 			{
 				debug("PD", 1);
+				resetTrans(g);
 				menu.paintMenu(g);
 			}
 			GameScr.info1.paint(g);
@@ -2303,6 +2363,8 @@ public class GameCanvas : IActionListener
 				if (effect is ChatPopup && !effect.Equals(ChatPopup.currChatPopup) && !effect.Equals(ChatPopup.serverChatPopUp))
 					effect.paint(g);
 			}
+			if (currentDialog != null)
+				currentDialog.paint(g);
 			if (Char.isLoadingMap || LoginScr.isContinueToLogin || ServerListScreen.waitToLogin || ServerListScreen.isWait)
 			{
 				paintChangeMap(g);
@@ -2321,15 +2383,8 @@ public class GameCanvas : IActionListener
 				if (mSystem.currentTimeMillis() > timeBreakLoading)
 				{
 					timeBreakLoading = mSystem.currentTimeMillis() + 30000;
-					if (currentScreen != null)
-					{
-						if (currentScreen is GameScr)
-							GameScr.gI().switchToMe();
-						else if (!(currentScreen is SplashScr) && currentScreen is LoginScr)
-						{
-							gI().resetToLoginScrz();
-						}
-					}
+					if (currentScreen != null && !(currentScreen is GameScr) && !(currentScreen is SplashScr) && !(currentScreen is LoginScr))
+						;
 				}
 			}
 			debug("PE", 1);
@@ -2908,6 +2963,31 @@ public class GameCanvas : IActionListener
 		}
 		switch (idAction)
 		{
+		case 100001:
+			Service.gI().getFlag(0, -1);
+			InfoDlg.showWait();
+			return;
+		case 100002:
+			if (loginScr == null)
+				loginScr = new LoginScr();
+			loginScr.backToRegister();
+			return;
+		case 100003:
+			return;
+		case 100004:
+			return;
+		case 100005:
+			if (Char.myCharz().statusMe == 14)
+				startOKDlg(mResources.can_not_do_when_die);
+			else
+				Service.gI().openUIZone();
+			return;
+		case 100006:
+			mSystem.onDisconnected();
+			return;
+		}
+		switch (idAction)
+		{
 		case 101023:
 			Main.numberQuit = 0;
 			return;
@@ -2922,6 +3002,9 @@ public class GameCanvas : IActionListener
 			else
 				serverScreen.show2();
 			return;
+		case 101026:
+			mSystem.onDisconnected();
+			return;
 		}
 		if (idAction != 999)
 		{
@@ -2929,23 +3012,33 @@ public class GameCanvas : IActionListener
 			{
 				if (idAction != 9999)
 				{
-					if (idAction != 888361)
-						return;
-					string text5 = inputDlg.tfInput.getText();
-					endDlg();
-					if (text5.Length >= 6 && !text5.Equals(string.Empty))
-						try
-						{
-							Service.gI().activeAccProtect(int.Parse(text5));
+					if (idAction != 100016)
+					{
+						if (idAction != 888361)
 							return;
-						}
-						catch (Exception ex4)
-						{
-							startOKDlg(mResources.ALERT_PRIVATE_PASS_2);
-							Cout.println("Loi tai 888361 Gamescavas " + ex4.ToString());
-							return;
-						}
-					startOKDlg(mResources.ALERT_PRIVATE_PASS_1);
+						string text5 = inputDlg.tfInput.getText();
+						endDlg();
+						if (text5.Length >= 6 && !text5.Equals(string.Empty))
+							try
+							{
+								Service.gI().activeAccProtect(int.Parse(text5));
+								return;
+							}
+							catch (Exception ex4)
+							{
+								startOKDlg(mResources.ALERT_PRIVATE_PASS_2);
+								Cout.println("Loi tai 888361 Gamescavas " + ex4.ToString());
+								return;
+							}
+						startOKDlg(mResources.ALERT_PRIVATE_PASS_1);
+					}
+					else
+					{
+						ServerListScreen.ipSelect = 17;
+						instance.doResetToLoginScr(serverScreen);
+						ServerListScreen.waitToLogin = true;
+						endDlg();
+					}
 				}
 				else
 				{
@@ -2983,6 +3076,7 @@ public class GameCanvas : IActionListener
 		isPointerDown = false;
 		isPointerJustDown = false;
 		isPointerJustRelease = false;
+		isPointerSelect = false;
 		GameScr.gI().lastSingleClick = 0L;
 		GameScr.gI().isPointerDowning = false;
 	}
