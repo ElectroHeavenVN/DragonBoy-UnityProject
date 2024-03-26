@@ -26,6 +26,9 @@ jobs:
           restore-keys: Library-
       - name: Change scripting backend to ${{matrix.scriptingBackend}}
         run: chmod +x set_scripting_backend.sh && ./set_scripting_backend.sh "DragonBoy/ProjectSettings/ProjectSettings.asset" "${{ matrix.targetPlatform }}" "${{matrix.scriptingBackend}}"
+      - if: ${{ matrix.targetPlatform == "Android" }} 
+        name: Free Disk Space
+        uses: jlumbroso/free-disk-space@v1.3.1
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
